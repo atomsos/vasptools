@@ -6,7 +6,7 @@ tools for vasp
 
 ## POSCAR
 ```python
-from vasptools impot potcar
+from vasptools import potcar
 potcar.get_potcar_content(pp_names, pp_type)
 potcar.gen_potcar(pp_names, pp_type)
 ```
