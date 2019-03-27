@@ -12,13 +12,14 @@ potcar.gen_potcar(pp_names, pp_type)
 
 
 ## TODO
-[ ] INCAR
-[ ] POSCAR
-[ ] KPOINTS
-[ ] OUTCAR
-[ ] DOSCAR
-[ ] CHGCAR
-[ ] CHG
-[ ] WAVECAR
+- [ ]  INCAR
+- [ ] POSCAR
+- [ ] KPOINTS
+- [ ] OUTCAR
+- [ ] DOSCAR
+- [ ] CHGCAR
+- [ ] CHG
+- [ ] WAVECAR
+
 ...
 
