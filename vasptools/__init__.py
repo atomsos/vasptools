@@ -2,12 +2,12 @@
 
 
 
-import potcar
-import poscar
-import incar
-import kpoints
-import doscar
-import outcar
-import wavecar
-import chgcar
-import chg
+from . import potcar
+from . import poscar
+from . import incar
+from . import kpoints
+from . import doscar
+from . import outcar
+from . import wavecar
+from . import chgcar
+from . import chg

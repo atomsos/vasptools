@@ -2,7 +2,7 @@
 
 
 import os, glob
-import utils
+from . import utils
 
 def get_potcar_content(pp_names=None, pp_type='potpaw_PBE'):
     assert utils.vasppot_path is not None, \
