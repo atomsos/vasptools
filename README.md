@@ -6,15 +6,17 @@ tools for vasp
 
 ## POSCAR
 ```python
-from vasptools import potcar
-potcar.get_potcar_content(pp_names, pp_type)
-potcar.gen_potcar(pp_names, pp_type)
+>>> from vasptools import potcar
+>>> potcar.get_potcar_content(pp_names=['H', 'He', 'Li', pp_type='potpaw_PBE')
+' PAW_PBE H 15Jun2001\n 1.00000000000000000\n parameters from PSCTR are:\n   VRHFIN =H: ultrasoft test\n '
+>>> potcar.gen_potcar(pp_names=['H'], pp_type='potpaw_PBE')
+
 ```
 
 
 
 ## TODO
-- [ ]  INCAR
+- [ ] INCAR
 - [ ] POSCAR
 - [ ] KPOINTS
 - [ ] OUTCAR
