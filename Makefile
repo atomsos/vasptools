@@ -20,8 +20,8 @@ build:
 install:
 	python setup.py install --user
 
-sudoinstall:
-	sudo python setup.py install
+travisinstall:
+	python setup.py install
 
 test:
 	python -c "from vasptools import potcar; print(potcar.get_potcar_content(['H', 'He', 'Li']))"
