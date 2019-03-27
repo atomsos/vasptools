@@ -1,7 +1,6 @@
-.PHONY: all, build, install, test
+.PHONY: all build install test
 
 all:
-	make README.rst
 	make build
 	make install
 	make test
@@ -13,6 +12,7 @@ README.rst: README.md
 
 
 build:
+	rm -rf build/ sdist/ dist/ vasptools.egg-info/
 	make README.rst
 	python setup.py sdist build
 	python setup.py bdist_wheel --universal
@@ -24,4 +24,8 @@ travisinstall:
 	python setup.py install
 
 test:
-	python -c "from vasptools import potcar; print(potcar.get_potcar_content(['H', 'He', 'Li']))"
+	python -c "from vasptools import potcar; print(potcar.get_potcar_content(['H'])[:1000])"
+
+upload:
+	twine upload dist/*
+

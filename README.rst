@@ -3,6 +3,8 @@ vasptools
 
 tools for vasp
 
+|Build Status|
+
 POSCAR
 ------
 
@@ -25,3 +27,6 @@ TODO
 -  [ ] WAVECAR
 
 ...
+
+.. |Build Status| image:: https://travis-ci.org/atomse/vasptools.svg?branch=master
+   :target: https://travis-ci.org/atomse/vasptools
