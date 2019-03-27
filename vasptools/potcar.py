@@ -30,3 +30,13 @@ def gen_potcar(pp_names=None, pp_type='potpaw_PBE'):
 
 
 
+
+def test():
+    os.environ['VASPPOT'] = os.path.join(utils.TESTDIR, 'vasppot_sample')
+    print(get_potcar_content(['H', 'He', 'Li'])[:1000])
+
+
+if __name__ == '__main__':
+    test()
+
+

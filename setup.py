@@ -5,7 +5,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='vasptools',
-    version="0.1.1", 
+    version="0.2.0", 
     description=(
         'tool collection for parsing vasp inputs & outputs'
     ),
