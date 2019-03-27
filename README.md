@@ -1,6 +1,8 @@
 # vasptools
 tools for vasp
 
+[![Build Status](https://travis-ci.org/atomse/vasptools.svg?branch=master)](https://travis-ci.org/atomse/vasptools)
+
 
 ## POSCAR
 ```python
