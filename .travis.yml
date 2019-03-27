@@ -20,7 +20,7 @@ before_script:
 
 script:
   - make build
-  - make install
+  - make sudoinstall
   - make test
 
 
