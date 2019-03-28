@@ -6,8 +6,6 @@ from io import StringIO
 
 
 
-BASEDIR = os.path.dirname(os.path.abspath(__file__))
-TESTDIR = os.path.join(BASEDIR, '..', 'test_dir')
 
 possible_potcar_env = ['VASP_PP_PATH', 'VASPPOT', 'VASPPOT_HOME',]
 valid_pp_types = ['potcar', 'potcarGGA', 'potpaw', 'potpaw_GGA', 'potpaw_PBE']

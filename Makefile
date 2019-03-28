@@ -24,7 +24,7 @@ travisinstall:
 	python setup.py install
 
 test:
-	python ./vasptools/test.py
+	python ./test_dir/test.py
 
 upload:
 	twine upload dist/*

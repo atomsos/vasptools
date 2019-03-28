@@ -50,10 +50,11 @@ def gen_incar(incar_dict=None, dirname='.'):
 
 
 
-def test():
-    if not os.path.isdir(utils.TESTDIR):
+def test(TESTDIR='../test_dir'):
+    assert isinstance(TESTDIR, str)
+    if not os.path.isdir(TESTDIR):
         raise ValueError('You need to git clone the repo and run the test')
-    incar = os.path.join(utils.TESTDIR, 'INCAR_sample')
+    incar = os.path.join(TESTDIR, 'INCAR_sample')
     incar_dict = parse_incar(incar)
     print(incar_dict)
     preview_output_incar(incar_dict)
