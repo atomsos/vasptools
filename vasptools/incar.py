@@ -9,8 +9,11 @@ import re
 from io import StringIO
 from configparser import ConfigParser
 
-INCAR_STRING = 'incar'
+MOD_NAME = INCAR_STRING = 'incar'
 INCAR_SECTION_STRING = '['+INCAR_STRING+']'
+
+
+
 def parse_incar(incar=None):
     """
     parse incar file to a dict using configparser
@@ -80,3 +83,24 @@ def test(test_dir='../test_dir'):
     print(incar_dict)
     preview_output_incar(incar_dict)
     gen_incar(incar_dict, '/tmp')
+
+
+
+def cli_add_parser(subparsers):
+    """
+    potcar add_parser
+    """
+    subp = subparsers.add_parser(MOD_NAME, help='INCAR')
+    subp.add_argument('incar', metavar='PATH', help='INCAR template')
+
+
+def cli_args_exec(args):
+    """
+    potcar args_exec
+    """
+    if args.DEBUG:
+        print(__file__)
+    if args.test:
+        test(args.test_dir)
+    else:
+        parse_incar(args.incar)

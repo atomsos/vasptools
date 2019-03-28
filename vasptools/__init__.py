@@ -3,6 +3,8 @@ vasptools __init__
 """
 
 
+
+from . import api
 from . import potcar
 from . import poscar
 from . import incar
@@ -24,3 +26,9 @@ __all_modules__ = [
     chgcar,
     chg,
     ]
+
+
+
+__version__ = '0.3.0'
+def version():
+    return __version__

@@ -7,13 +7,8 @@ all:
 
 
 
-README.rst: README.md
-	pandoc README.md -o README.rst
-
-
 build:
 	rm -rf build/ sdist/ dist/ vasptools.egg-info/
-	make README.rst
 	python setup.py sdist build
 	python setup.py bdist_wheel --universal
 
@@ -24,7 +19,7 @@ travisinstall:
 	python setup.py install
 
 test:
-	coverage run ./test_dir/test.py
+	coverage run ./vasptools/test/test.py
 	coverage report
 
 

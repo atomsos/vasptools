@@ -11,7 +11,7 @@ python:
 
 install:
   - pip install -r requirements.txt
-  - pip install pandoc converage
+  - pip install pandoc coverage
 
 # before_script:
 #   - export VASPPOT=$TRAVIS_BUILD_DIR/vasppot_sample
