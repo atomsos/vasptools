@@ -21,6 +21,10 @@ travisinstall:
 test:
 	coverage run ./vasptools/test/test.py
 	coverage report
+	vasptools -h
+	vasptools LISTSUBCOMMAND
+	vasptools LISTSUBCOMMAND | xargs -n 1 -I [] vasptools [] -h
+
 
 
 upload:
