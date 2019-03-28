@@ -2,6 +2,12 @@
 tools for vasp
 
 [![Build Status](https://travis-ci.org/atomse/vasptools.svg?branch=master)](https://travis-ci.org/atomse/vasptools)
+![PyPI](https://img.shields.io/pypi/v/vasptools.svg?color=blue&label=vasptools)
+
+## Installation
+```python
+pip install vasptools
+```
 
 
 ## POSCAR
