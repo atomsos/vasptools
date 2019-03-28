@@ -14,7 +14,6 @@ from .complete import (cli_case_insensitive_validator,
                        cli_fmt_completer, 
                        cli_reffmt_completer)
 
-
 def run_vasptools_cli():
     ################################################################################################
     # NOTE: I am deliberately not using the 'choices' argument in add_argument. I could use it
@@ -43,6 +42,7 @@ def run_vasptools_cli():
             mod_name = mod.MOD_NAME
             mod.cli_add_parser(subparsers)
             module_map.update({mod_name: mod})
+    subparsers.add_parser('LISTSUBCOMMAND', help='list all sub commands, just for test')
 
     """
     ########################################
@@ -172,6 +172,9 @@ def run_vasptools_cli():
     args = parser.parse_args()
     if args.DEBUG:
         print(args)
+    if args.subcmd == 'LISTSUBCOMMAND':
+        print('\n'.join(list(module_map)))
+        exit(0)
     # args = cli_check_normalize_args(args)
 
     # Actually generate the output
