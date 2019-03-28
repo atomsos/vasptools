@@ -23,10 +23,20 @@ test:
 	coverage report
 	vasptools -h
 	vasptools LISTSUBCOMMAND
-	vasptools LISTSUBCOMMAND | xargs -n 1 -I [] vasptools [] -h
+	vasptools LISTSUBCOMMAND | xargs -n 1 -I [] bash -c '(vasptools [] -h >/dev/null 2>&1 || echo ERROR: [])'
 
-
-
+test_env:
+	bash -c ' \
+	rm -rf venv; \
+	virtualenv venv; \
+	source venv/bin/activate; \
+	which python; \
+	python --version; \
+	pip install -r requirements.txt; \
+	make build; \
+	make travisinstall; \
+	make test'
+	
 upload:
 	twine upload dist/*
 

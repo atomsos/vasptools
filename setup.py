@@ -2,10 +2,18 @@
 
 from setuptools import setup, find_packages
 
+def get_version():
+    import os
+    import sys
+    sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+    import vasptools
+    return vasptools.__version__
+
+
 if __name__ == '__main__':
     setup(
         name='vasptools',
-        version="0.2.1",
+        version=get_version(),
         description=(
             'tool collection for parsing vasp inputs & outputs'
         ),
@@ -33,6 +41,7 @@ if __name__ == '__main__':
         ],
         install_requires=[
             'sh>=1.10.0',
+            'argcomplete',
         ],
         entry_points={
             "console_scripts": [
