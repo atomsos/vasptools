@@ -24,7 +24,7 @@ travisinstall:
 	python setup.py install
 
 test:
-	python -c "from vasptools import potcar; print(potcar.get_potcar_content(['H'])[:1000])"
+	python ./test_dir/test.py
 
 upload:
 	twine upload dist/*

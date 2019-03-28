@@ -11,3 +11,19 @@ from . import outcar
 from . import wavecar
 from . import chgcar
 from . import chg
+
+__all_modules__ = [
+    potcar, 
+    poscar,
+    incar,
+    kpoints,
+    doscar,
+    outcar,
+    wavecar,
+    chgcar,
+    chg,
+]
+
+
+
+

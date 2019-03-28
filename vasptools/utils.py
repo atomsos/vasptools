@@ -3,6 +3,10 @@ import sh
 import platform
 from io import StringIO
 
+
+
+
+
 possible_potcar_env = ['VASP_PP_PATH', 'VASPPOT', 'VASPPOT_HOME',]
 valid_pp_types = ['potcar', 'potcarGGA', 'potpaw', 'potpaw_GGA', 'potpaw_PBE']
 

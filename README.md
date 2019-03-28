@@ -13,10 +13,25 @@ tools for vasp
 
 ```
 
+## INCAR
+```python
+>>> from vasptools import incar
+>>> incar_dict = incar.parse_incar(incarfile)
+>>> print(incar_dict)
+OrderedDict([('system', 'si series'), ('prec', 'accurate'), ('encut', '245.345'), ('ibrion', '-1'), ('nsw', '0'), ('nelmin', '2'), ('ediff', '1.0e-05'), ('ediffg', '-0.02'), ('voskown', '1'), ('nblock', '1'), ('lvtot', '.true.'), ('nelm', '60'), ('algo', 'fast   (blocked davidson)'), ('gga', 'pe'), ('ispin', '1'), ('iniwav', '1'), ('istart', '0'), ('icharg', '2'), ('lwave', '.false.'), ('lcharg', '.true.'), ('addgrid', '.false.'), ('lhyperfine', '.false.'), ('ismear', '0'), ('sigma', '0.2'), ('rwigs', '1.11')])
+>>> print(output_incar(incar_dict))
+system = si series
+prec = accurate
+encut = 245.345
+ibrion = -1
+nsw = 0
+nelmin = 2
+```
+
 
 
 ## TODO
-- [ ] INCAR
+- [x] INCAR
 - [ ] POSCAR
 - [ ] KPOINTS
 - [ ] OUTCAR
