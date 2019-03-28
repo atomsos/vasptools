@@ -29,6 +29,7 @@ def run_vasptools_cli():
     parser.add_argument('-ppath', '--potpath', metavar='PATH', help='set vasppot_path, you could also set env VASPPOT')
     parser.add_argument('-t', '--test', action='store_true', help='run test')
     parser.add_argument('-td', '--test_dir', metavar='PATH', help='test_dir')
+    parser.add_argument('-s', '--shell', action='store_true', help='shell mode, exec shell script')
     parser.add_argument('-D', '--DEBUG', action='store_true', help='debug')
     parser.add_argument('-V', action='version', version='vasptools ' + version())
     # parser.add_argument('-o', '--output', metavar='PATH', help='Output to given file rather than stdout')
