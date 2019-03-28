@@ -24,7 +24,9 @@ travisinstall:
 	python setup.py install
 
 test:
-	python ./test_dir/test.py
+	coverage run ./test_dir/test.py
+	coverage report
+
 
 upload:
 	twine upload dist/*

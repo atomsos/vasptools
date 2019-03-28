@@ -1,5 +1,6 @@
-#!/usr/bin/env python3
-
+"""
+vasptools __init__
+"""
 
 
 from . import potcar
@@ -13,7 +14,7 @@ from . import chgcar
 from . import chg
 
 __all_modules__ = [
-    potcar, 
+    potcar,
     poscar,
     incar,
     kpoints,
@@ -22,8 +23,4 @@ __all_modules__ = [
     wavecar,
     chgcar,
     chg,
-]
-
-
-
-
+    ]

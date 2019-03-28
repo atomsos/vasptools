@@ -18,7 +18,8 @@ def test():
             print(mod.__name__)
             try:
                 mod.test(BASEDIR)
-            except:
+            except Exception as e:
+                raise e
                 error_mod.append(mod)
                 exitcode = 1
     if exitcode == 0:

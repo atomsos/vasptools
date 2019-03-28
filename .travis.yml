@@ -12,6 +12,7 @@ python:
 
 install:
   - pip install -r requirements.txt
+  - pip install pandoc
 
 # before_script:
 #   - export VASPPOT=$TRAVIS_BUILD_DIR/vasppot_sample

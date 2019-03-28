@@ -1,30 +1,37 @@
+"""
+utils used by vasptools
+"""
 import os
-import sh
 import platform
 from io import StringIO
+import sh
 
 
 
 
 
-possible_potcar_env = ['VASP_PP_PATH', 'VASPPOT', 'VASPPOT_HOME',]
-valid_pp_types = ['potcar', 'potcarGGA', 'potpaw', 'potpaw_GGA', 'potpaw_PBE']
+
+POSSIBLE_POTCAR_ENV = ['VASP_PP_PATH', 'VASPPOT', 'VASPPOT_HOME',]
+VALID_PP_TYPES = ['potcar', 'potcarGGA', 'potpaw', 'potpaw_GGA', 'potpaw_PBE']
 
 
-vasppot_path = None
-for env in possible_potcar_env:
+VASPPOT_PATH = None
+for env in POSSIBLE_POTCAR_ENV:
     if env in os.environ:
-        vasppot_path = os.environ[env]
+        VASPPOT_PATH = os.environ[env]
         break
 
 
 
 def get_file_content(filename):
+    """
+    Get file content, for plain text, .xz, .Z, .gz
+    """
     assert os.path.exists(filename), filename+' not exists'
     _, extension = os.path.splitext(filename)
     if extension == '':
-        with open(filename) as fd:
-            output = fd.read()
+        with open(filename) as _fd:
+            output = _fd.read()
         return output
     else:
         linux_darwin_config_table = {
@@ -47,10 +54,10 @@ def get_file_content(filename):
             assert extension in config_table, extension+' has not config'
             config_table = config_table[extension]
             command = config_table['command']
-            args    = config_table['args']
+            args = config_table['args']
             args.append(filename)
             args = tuple(args)
-            sh.Command(command).__call__(*args, _out=buff)
+            sh.Command(command)(*args, _out=buff)
         elif platform.system() in ['Windows']:
             raise NotImplementedError('.Z not support windows for now')
         else:
