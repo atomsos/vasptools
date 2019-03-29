@@ -29,7 +29,8 @@ if __name__ == '__main__':
         python_requires='>=3',
         classifiers=[
             'Development Status :: 4 - Beta',
-            'Operating System :: Linux/OSX',
+            'Operating System :: MacOS',
+            'Operating System :: POSIX',
             'Intended Audience :: Science/Research',
             'License :: OSI Approved :: MIT License',
             'Programming Language :: Python',
