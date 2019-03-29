@@ -14,7 +14,7 @@ before_install:
 
 install:
   - pip install -r requirements.txt
-  - pip install pandoc coverage
+  - pip install pandoc coverage twine
 
 before_script:
   - python -V
