@@ -11,6 +11,7 @@ build:
 	rm -rf build/ sdist/ dist/ vasptools.egg-info/
 	python setup.py sdist build
 	python setup.py bdist_wheel --universal
+	twine check dist/*
 
 install:
 	python setup.py install --user

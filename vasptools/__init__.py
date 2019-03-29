@@ -29,6 +29,6 @@ __all_modules__ = [
 
 
 
-__version__ = '0.3.2'
+__version__ = '0.3.5'
 def version():
     return __version__

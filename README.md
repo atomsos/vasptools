@@ -10,7 +10,7 @@ pip install vasptools
 ```
 
 ## CLI mode
-```shell
+```bash
 $ vasptools -h
 usage: vasptools [-h] [-p] [-ppath PATH] [-t] [-td PATH] [-s] [-D] [-V]
                  subcommand ...
@@ -34,7 +34,6 @@ optional arguments:
   -s, --shell           shell mode, exec shell script
   -D, --DEBUG           debug
   -V                    show program's version number and exit
-$
 $ vasptools potcar -h
 usage: vasptools potcar [-h] [-i PATH] [-d PATH] [-p PTYPE] [-l]
                         [pp_names [pp_names ...]]
