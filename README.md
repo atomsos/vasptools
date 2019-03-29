@@ -2,13 +2,58 @@
 tools for vasp
 
 [![Build Status](https://travis-ci.org/atomse/vasptools.svg?branch=master)](https://travis-ci.org/atomse/vasptools)
-![PyPI](https://img.shields.io/pypi/v/vasptools.svg?color=blue&label=vasptools)
+[![PyPI](https://img.shields.io/pypi/v/vasptools.svg?color=blue&label=vasptools)](https://pypi.org/project/vasptools)
 
 ## Installation
 ```python
 pip install vasptools
 ```
 
+## CLI mode
+```shell
+$ vasptools -h
+usage: vasptools [-h] [-p] [-ppath PATH] [-t] [-td PATH] [-s] [-D] [-V]
+                 subcommand ...
+
+VASPTOOLS
+
+positional arguments:
+  subcommand
+    potcar              POTCAR
+    incar               INCAR
+    LISTSUBCOMMAND      list all sub commands, just for test
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -p, --preview         preview
+  -ppath PATH, --potpath PATH
+                        set vasppot_path, you could also set env VASPPOT
+  -t, --test            run test
+  -td PATH, --test_dir PATH
+                        test_dir
+  -s, --shell           shell mode, exec shell script
+  -D, --DEBUG           debug
+  -V                    show program's version number and exit
+$
+$ vasptools potcar -h
+usage: vasptools potcar [-h] [-i PATH] [-d PATH] [-p PTYPE] [-l]
+                        [pp_names [pp_names ...]]
+
+positional arguments:
+  pp_names
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -i PATH, --input PATH
+                        Generate POTCAR with POSCAR
+  -d PATH, --dirname PATH
+                        directory to generate file
+  -p PTYPE, --ptype PTYPE
+                        potcar type, avail: ['potcar', 'potcarGGA', 'potpaw',
+                        'potpaw_GGA', 'potpaw_PBE']
+  -l, --list            list available potcar
+
+```
 
 ## POSCAR
 ```python

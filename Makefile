@@ -19,7 +19,7 @@ travisinstall:
 	python setup.py install
 
 test:
-	coverage run ./vasptools/test/test.py
+	coverage run ./vasptools/test/test.py > /tmp/vasptools.test
 	coverage report
 	vasptools -h
 	vasptools LISTSUBCOMMAND

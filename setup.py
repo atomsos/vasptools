@@ -18,6 +18,7 @@ if __name__ == '__main__':
             'tool collection for parsing vasp inputs & outputs'
         ),
         long_description=open('README.md').read(),
+        long_description_content_type='text/markdown',
         author='Sky Zhang',
         author_email='sky.atomse@gmail.com',
         maintainer='Sky Zhang',
