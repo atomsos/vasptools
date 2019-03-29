@@ -1,9 +1,9 @@
 # coding=utf-8
 
+import os
 from setuptools import setup, find_packages
 
 def get_version():
-    import os
     import sys
     sys.path.append(os.path.dirname(os.path.abspath(__file__)))
     import vasptools
@@ -11,6 +11,8 @@ def get_version():
 
 
 if __name__ == '__main__':
+    test_files = [os.path.join('vasptools', 'test', filename) for filename in os.listdir('vasptools/test')]
+    print(test_files)
     setup(
         name='vasptools',
         version=get_version(),
@@ -65,5 +67,7 @@ if __name__ == '__main__':
                 'graphviz'
             ],
         },
-        zip_safe=True,
+        include_package_data = True,
+        package_data = {'vasptools_test': test_files},
+        zip_safe=False,
     )
