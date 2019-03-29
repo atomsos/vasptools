@@ -25,6 +25,7 @@ def run_vasptools_cli():
     # Main global options
     ########################################
     parser = argparse.ArgumentParser(description='VASPTOOLS')
+    parser.add_argument('-d', '--basedir', metavar='PATH', help='test_dir')
     parser.add_argument('-p', '--preview', action='store_true', help='preview')
     parser.add_argument('-ppath', '--potpath', metavar='PATH', help='set vasppot_path, you could also set env VASPPOT')
     parser.add_argument('-t', '--test', action='store_true', help='run test')

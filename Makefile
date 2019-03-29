@@ -8,7 +8,7 @@ all:
 
 
 build:
-	rm -rf build/ sdist/ dist/ vasptools.egg-info/
+	rm -rf build/ sdist/ dist/ vasptools-*/ vasptools.egg-info/
 	python setup.py sdist build
 	python setup.py bdist_wheel --universal
 	twine check dist/*
@@ -20,11 +20,11 @@ travisinstall:
 	python setup.py install
 
 test:
-	coverage run ./vasptools/test/test.py > /tmp/vasptools.test
+	coverage run --source vasptools ./vasptools/test/test.py 
+	coverage run --source vasptools `which vasptools` -h
+	coverage run --source vasptools `which vasptools` LISTSUBCOMMAND
+	coverage run --source vasptools `which vasptools` LISTSUBCOMMAND | xargs -n 1 -I [] bash -c '(coverage run --source vasptools `which vasptools` [] -h >/dev/null 2>&1 || echo ERROR: [])'
 	coverage report
-	vasptools -h
-	vasptools LISTSUBCOMMAND
-	vasptools LISTSUBCOMMAND | xargs -n 1 -I [] bash -c '(vasptools [] -h >/dev/null 2>&1 || echo ERROR: [])'
 
 test_env:
 	bash -c ' \

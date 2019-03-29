@@ -71,12 +71,13 @@ def gen_incar(incar_dict=None, dirname='.'):
         _fd.write(output_incar(incar_dict))
 
 
-def test(test_dir='../test_dir'):
+def test(test_dir=None):
     """
     Test incar
     """
+    test_dir = test_dir or os.path.join(os.path.dirname(os.path.abspath(__file__)), 'test')
     assert isinstance(test_dir, str) and os.path.isdir(test_dir), \
-        'You need to git clone the repo and run the test'
+        'test_dir: {0}\nYou need to git clone the repo and run the test'.format(test_dir)
     incar = os.path.join(test_dir, 'INCAR_sample')
     incar_dict = parse_incar(incar)
     preview_parse_incar(incar)
