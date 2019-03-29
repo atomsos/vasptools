@@ -5,11 +5,11 @@
 import os
 BASEDIR = os.path.dirname(os.path.abspath(__file__))
 os.environ['VASPPOT'] = os.path.join(BASEDIR, 'vasppot_sample')
-print(os.environ['VASPPOT'])
 
 
 
 import vasptools
+
 def test():
     error_mod = []
     exitcode = 0

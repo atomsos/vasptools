@@ -7,13 +7,8 @@ all:
 
 
 
-README.rst: README.md
-	pandoc README.md -o README.rst
-
-
 build:
 	rm -rf build/ sdist/ dist/ vasptools.egg-info/
-	make README.rst
 	python setup.py sdist build
 	python setup.py bdist_wheel --universal
 
@@ -24,8 +19,24 @@ travisinstall:
 	python setup.py install
 
 test:
-	python ./test_dir/test.py
+	coverage run ./vasptools/test/test.py
+	coverage report
+	vasptools -h
+	vasptools LISTSUBCOMMAND
+	vasptools LISTSUBCOMMAND | xargs -n 1 -I [] bash -c '(vasptools [] -h >/dev/null 2>&1 || echo ERROR: [])'
 
+test_env:
+	bash -c ' \
+	rm -rf venv; \
+	virtualenv venv; \
+	source venv/bin/activate; \
+	which python; \
+	python --version; \
+	pip install -r requirements.txt; \
+	make build; \
+	make travisinstall; \
+	make test'
+	
 upload:
 	twine upload dist/*
 

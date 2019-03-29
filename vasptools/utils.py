@@ -1,30 +1,43 @@
+"""
+utils used by vasptools
+"""
 import os
-import sh
 import platform
 from io import StringIO
+import sh
 
 
 
 
 
-possible_potcar_env = ['VASP_PP_PATH', 'VASPPOT', 'VASPPOT_HOME',]
-valid_pp_types = ['potcar', 'potcarGGA', 'potpaw', 'potpaw_GGA', 'potpaw_PBE']
+
+POSSIBLE_POTCAR_ENV = ['VASPPOT', 'VASP_PP_PATH', 'VASPPOT_HOME',]
+VALID_PP_TYPES = ['potcar', 'potcarGGA', 'potpaw', 'potpaw_GGA', 'potpaw_PBE']
 
 
-vasppot_path = None
-for env in possible_potcar_env:
-    if env in os.environ:
-        vasppot_path = os.environ[env]
-        break
+global VASPPOT_PATH
+VASPPOT_PATH = None
+
+
+
+def reset_vasppot_path():
+    global VASPPOT_PATH
+    for env in POSSIBLE_POTCAR_ENV:
+        if env in os.environ:
+            VASPPOT_PATH = os.environ[env]
+            break
 
 
 
 def get_file_content(filename):
+    """
+    Get file content, for plain text, .xz, .Z, .gz
+    """
     assert os.path.exists(filename), filename+' not exists'
     _, extension = os.path.splitext(filename)
     if extension == '':
-        with open(filename) as fd:
-            output = fd.read()
+        with open(filename) as _fd:
+            output = _fd.read()
         return output
     else:
         linux_darwin_config_table = {
@@ -47,12 +60,29 @@ def get_file_content(filename):
             assert extension in config_table, extension+' has not config'
             config_table = config_table[extension]
             command = config_table['command']
-            args    = config_table['args']
+            args = config_table['args']
             args.append(filename)
             args = tuple(args)
-            sh.Command(command).__call__(*args, _out=buff)
+            sh.Command(command)(*args, _out=buff)
         elif platform.system() in ['Windows']:
             raise NotImplementedError('.Z not support windows for now')
         else:
             raise NotImplementedError('Unknown system')
         return buff.getvalue()
+
+reset_vasppot_path()
+
+chemical_symbols = ['X', 'H', 'He', 'Li', 'Be', 'B', 'C', 'N', 'O', 'F',
+                    'Ne', 'Na', 'Mg', 'Al', 'Si', 'P', 'S', 'Cl', 'Ar',
+                    'K', 'Ca', 'Sc', 'Ti', 'V', 'Cr', 'Mn', 'Fe', 'Co',
+                    'Ni', 'Cu', 'Zn', 'Ga', 'Ge', 'As', 'Se', 'Br', 'Kr',
+                    'Rb', 'Sr', 'Y', 'Zr', 'Nb', 'Mo', 'Tc', 'Ru', 'Rh',
+                    'Pd', 'Ag', 'Cd', 'In', 'Sn', 'Sb', 'Te', 'I', 'Xe',
+                    'Cs', 'Ba', 'La', 'Ce', 'Pr', 'Nd', 'Pm', 'Sm', 'Eu',
+                    'Gd', 'Tb', 'Dy', 'Ho', 'Er', 'Tm', 'Yb', 'Lu', 'Hf',
+                    'Ta', 'W', 'Re', 'Os', 'Ir', 'Pt', 'Au', 'Hg', 'Tl',
+                    'Pb', 'Bi', 'Po', 'At', 'Rn', 'Fr', 'Ra', 'Ac', 'Th',
+                    'Pa', 'U', 'Np', 'Pu', 'Am', 'Cm', 'Bk', 'Cf', 'Es',
+                    'Fm', 'Md', 'No', 'Lr', 'Rf', 'Db', 'Sg', 'Bh', 'Hs',
+                    'Mt', 'Ds', 'Rg', 'Cn', 'Nh', 'Fl', 'Mc', 'Lv', 'Ts',
+                    'Og']

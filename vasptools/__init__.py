@@ -1,7 +1,10 @@
-#!/usr/bin/env python3
+"""
+vasptools __init__
+"""
 
 
 
+from . import api
 from . import potcar
 from . import poscar
 from . import incar
@@ -13,7 +16,7 @@ from . import chgcar
 from . import chg
 
 __all_modules__ = [
-    potcar, 
+    potcar,
     poscar,
     incar,
     kpoints,
@@ -22,8 +25,10 @@ __all_modules__ = [
     wavecar,
     chgcar,
     chg,
-]
+    ]
 
 
 
-
+__version__ = '0.3.0'
+def version():
+    return __version__
