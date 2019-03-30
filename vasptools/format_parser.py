@@ -26,6 +26,47 @@ class ExtList(list):
             'multiplier should be a list of numbers, instead of {0} of {1}'.format(a, type(a))
         return self.__class__([x for i, x in enumerate(self) for time in range(a[i])])
 
+class ExtDict(dict):
+    """docstring for ExtDict"""
+    def __getitem__(self, name):
+        if name in self.keys():
+            return dict.__getitem__(self, name)
+        name = name.split('/')
+        sdict = self
+        while name:
+            key = name.pop(0)
+            if key:
+                sdict = sdict[key]
+        return sdict
+
+def astype(typestring):
+    typestring = typestring.lower()
+    if typestring == 'int':
+        return int
+    elif typestring == 'float':
+        return float
+    elif typestring == 'string':
+        return str
+    elif typestring == 'logical':
+        return bool
+    else:
+        raise NotImplementedError('{0} not implemented'.format(typestring))
+
+
+def vasp_xml_parameters(xml_node):
+    parameters = {}
+    for sep_node in xml_node.xpath('./separator'):
+        sep_name = sep_node.get('name')
+        for item_node in sep_node.xpath('./i|./v'):
+            item_name = item_node.get('name')
+            item_type = item_node.get('type')
+            if item_node.tag == 'i':
+                value = astype(item_type)(item_node.text)
+            else:
+                value = datablock_to_numpy(item_node.text).flatten().astype(astype(item_type))
+            parameters.update(construct_depth_dict(sep_node+'/'+item_node, value, parameters))
+    return parameters
+
 
 def datablock_to_numpy(datablock):
     """
@@ -59,6 +100,7 @@ def get_depth_dict(root, names):
                 return None
     return ptr
 
+
 def get_filestring_and_format(fileobj, file_format=None):
     if hasattr(fileobj, 'read'):
         fileobj = fileobj.read()
@@ -67,6 +109,7 @@ def get_filestring_and_format(fileobj, file_format=None):
             file_format = file_format or filetype(fileobj)
             fileobj = open(fileobj).read()
     return fileobj.lstrip(), file_format
+
 
 def read(fileobj, format=None, get_dict=False, warning=False):
     from .format_string import FORMAT_STRING
@@ -107,24 +150,28 @@ def process_primitive_data(arrays, file_string, formats, warning=False, DEBUG=Fa
         if not selectionall:
             match = [match[selection]]
         if process:
-            match = [process(x) for x in match]
+            match = [process(x, arrays) for x in match]
         if isinstance(key, str):
             value = match[0] if not selectionall else match
             if DEBUG: print(key, value)
-            value = pattern_property['type'](value)
+            if pattern_property.get('type', None):
+                if isinstance(value, np.ndarray):
+                    value = value.astype(pattern_property['type'])
+                else:
+                    value = pattern_property['type'](value)
             arrays.update(construct_depth_dict(key, value, arrays))
         else: # array
             if DEBUG: print(key)
-            def process_data(data):
+            def np_select(data):
                 if DEBUG: print(data, type(data))
                 data = eval('data[{0}]'.format(index))
                 return data.astype(_type)
             for key_group in key:
                 key, _type, index = key_group['key'], key_group['type'], key_group['index']
                 if not selectionall:
-                    value = process_data(match[0])
+                    value = np_select(match[0])
                 else:
-                    value = [process_data(data) for data in match]
+                    value = [np_select(data) for data in match]
                 arrays.update(construct_depth_dict(key, value, arrays))
 
 def process_synthesized_data(arrays, formats):

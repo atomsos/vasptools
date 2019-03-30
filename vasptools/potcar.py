@@ -45,7 +45,7 @@ def get_avail_pot(pp_names=None, pp_type=DEFAULT_PP_TYPE, preview=False):
         return [path.split('/')[-2] for path in glob.glob(reg_path)]
     assert utils.VASPPOT_PATH is not None, \
         'To use get_potcar, you need set VASPPOT env'
-    pp_names = pp_names or utils.chemical_symbols
+    pp_names = pp_names or utils.CHEMICAL_SYMBOLS
     if isinstance(pp_names, str):
         pp_names = [pp_names]
     assert isinstance(pp_names, (list, tuple)), \

@@ -104,4 +104,4 @@ def cli_args_exec(args):
     if args.test:
         test(args.test_dir)
     else:
-        parse_incar(args.incar)
+        print(parse_incar(args.incar))

@@ -1,0 +1,94 @@
+#####  This is a standard INCAR in VASP for sp opt calcualtion made by Linus.Denghui.Xing   #####
+ 
+SYSTEM =o2_graph_with_spin  
+
+#numbers of cores per compute node
+ 
+NCORE=5
+
+
+########## General Parameters #########
+ISTART= 0  #0=no WAVECAR exists, 1 or 2 to restart WAVECAR
+ICHARG = 1   #2 when ISTART is 0; 11=calcula. DOS
+#PREC = Accurate  # or Accurate(for HSE06). Gvectors twice aslargeas vec in BS are in FFT
+#ADDGRID = .FALSE. #addgrid for augmentation charge,reduce force noise
+LREAL = Auto  #projection in real space,fully opt of pro operators
+#ISYM = 0   #no symmetry
+#IDIPOL = 3 #monopole/dipole and quadrupole corrections.3=slab model; 4=isolated molecules
+NWRITE =2  #This flag determines how much will be written to the file OUTCAR.0/1=MD;2=short run; 3=sth. wrong; 4=debugging 
+#NFREE =2  #determines how many displacements are used for each direction and ion.2=central difference
+LWAVE = .FALSE.   #whether output WAVECAR
+LCHARG = .FALSE.   #whether output CHGCAR and CHG
+LVTOT = .FALSE.   #whether output LOCPOT
+LELF = .FALSE.   #whether output ELFCAR
+########## END General Parameters #########
+LORBIT = 12
+PREC = Accurate
+ICORELEVEL = 1
+
+
+
+####MOTION#####
+
+######## Cell/Geo.Opt(Ionic Relaxation)  ###########
+IBRION = 2   #opt 2=CG,almost ok; 1=RMM-DIIS; 5=freq; 0=MD ;
+ISIF = 0   # 2= ionic relaxation-Geo.Opt; 3=cell relaxation- Cell.Opt
+NSW = 0   # maxcycle of opt
+#POTIM = 2.5       # timestep of ionic movement (0.2 when not converge, maybe)
+#SMASS = 0       # >= 0, NVT ensemble, value determines frequency of coupling to heat  bath
+#MDALGO = 2
+#TEIN = 1000
+#TEBEG = 1000
+#TEEND = 100
+#NBLOCK = 1
+####$$$$ END Motions  $$$$####
+
+
+######### SCF #############
+ENCUT = 400.0   #plane waves with Ekin less than E are in basis set
+ISPIN = 2      #RKS(1) or UKS(2)
+NUPDOWN = 2   # Multiplicity: difference between up and down spin
+MAGMOM = 154*0.0 4*0.0 1*0.5 1*2.0
+ALGO = Fast   # This is algorithm of convergence. VeryFast(IALGO = 48 #RMM-DIIS); Normal(IALGO=38 #blocked Davidson iteration scheme); Fast(IALGO=38 #Davidson used for the initial phase,then switches to IALGO = 48 #RMM-DIIS); Conjugate(IALGO = 58); Damped=(IALGO = 53)not converge or for HSE06.
+#IALGO = 48  #blocked Davidson iteration scheme
+
+NELM = 200   #maxcycle of SCF
+#NELMIN = 6   #minimum number of SCF
+#NELMDL = -20   #nonselfconsistent step at begin,keep hamiltonian
+EDIFF = 1E-05   #error in energy,-05 is very accurate, -07 is when TS and Freq
+
+ISMEAR = 1  #method of partial occ. 0 when metal conducter,-5 when semi- or non-conducter,1 when gamma point 1 1 1
+SIGMA = 0.1   #width of the smearing in eV, 0.1 to 0.2
+
+
+########## DFT Fucntional #############
+GGA = PE   #PBE, 91 is PW91, empty is LDA
+
+#NUPDOWN = 0.0
+#LDAU = .TRUE.
+#LDAUTYPE = 2 
+#LDAUL =    -1   2  -1   -1
+#LDAUU =   0.0 3.0 0.0  0.0
+#LDAUPRINT = 2
+#LMAXMIX = 4 
+#LDAUJ =   0.0 0.0 0.0  0.0
+
+####### LDA+U #######
+#LDAU      = .TRUE.
+#LDAUTYPE  = 2  # the recommend type
+#LDAUL     = -1 -1  2  -1 -1
+#LDAUU     = 0.00 0.00 5.00  0.00  0.00 # C N Fe H O
+#LDAUJ     = 0.00 0.00 0.00  0.00  0.00
+
+
+######  PBE+D3(BJ)    #######
+#IVDW = 12
+#VDW_S6 = 1.000
+#VDW_S8 = 0.7875
+#VDW_A1 = 0.4289
+#VDW_A2 = 4.4407
+
+######## Other Properties  ############
+
+
+
