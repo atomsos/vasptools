@@ -1,4 +1,5 @@
-Automatic mesh 
+K-POINTS
 0
-Monkhorst-Pack
-1 1 1 
+Gamma
+5 1 1
+0 0 0
