@@ -8,7 +8,7 @@ from .format_parser import ExtList, datablock_to_numpy, xml_parameters
 FORMAT_STRING = {
     'vasp-out': {
         'prefered' : 'vasp-xml',
-        'filetype' : 'plain_text',
+        'file_format' : 'plain_text',
         'calculator' : 'VASP',
         'primitive_data': {
             r'free  energy   TOTEN\s*=\s*(.*?)\s+eV\s*\n' : {
@@ -45,7 +45,7 @@ FORMAT_STRING = {
             r'POSITION\s*TOTAL-FORCE[\s\S]*?-{2,}\n([\s\S]*?)\n\s+-{2,}' : {
                 'important' : True,
                 'selection' : -1,
-                'process' : datablock_to_numpy,
+                'process' : lambda data, arrays: datablock_to_numpy(data),
                 'key' : [
                     {
                         'key' : 'positions',
@@ -62,7 +62,7 @@ FORMAT_STRING = {
             r'FORCES acting on ions[\s\S]*?-{2,}\n([\s\S]*?)\s+-{2,}': {
                 'important' : True,
                 'selection' : -1,
-                'process' : datablock_to_numpy,
+                'process' : lambda data, arrays: datablock_to_numpy(data),
                 'key': [
                     {
                         'key' : 'calc_arrays/forces_e_ion',
@@ -95,19 +95,19 @@ FORMAT_STRING = {
     },
     'DOSCAR' : {
         'prefered' : 'vasp-xml',
-        'filetype' : 'plain_text',
+        'file_format' : 'plain_text',
         'primitive_data' : {
             r'.*\n.*\n.*\n.*\n.*\n.*\n([\s\S]*)' : {
                 'important' : True,
                 'selection' : -1,
-                'process' : datablock_to_numpy,
+                'process' : lambda data, arrays: datablock_to_numpy(data),
                 'key' : 'calc_arrays/doscar',
             },
         },
         'synthesized_data' : {},
     },
     'vasp-xml' : {
-        'filetype' : 'lxml',
+        'file_format' : 'lxml',
         'primitive_data' : {
             '(//varray[@name="basis"])[last()]//v//text()' : {
                 'important' : True,
@@ -182,7 +182,7 @@ FORMAT_STRING = {
             '//generator' : {
                 'important' : True,
                 'process' : lambda data, arrays: xml_parameters(data),
-                'key' : 'calc_arrays/generator',
+                'key' : 'calc_arrays/calc_properties',
             },
             '//kpoints/varray[@name="kpointlist"]/v/text()' : {
                 'important' : True,

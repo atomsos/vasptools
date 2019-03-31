@@ -27,10 +27,10 @@ __all_modules__ = [
     chg,
     ]
 
-from . import vasprun_xml
+from . import vasprun
 
-__test_modules__ = __all_modules__ + [vasprun_xml]
+__test_modules__ = __all_modules__ + [vasprun]
 
-__version__ = '0.4.0'
+__version__ = '0.5.0'
 def version():
     return __version__

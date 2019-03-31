@@ -40,7 +40,22 @@ class ExtDict(dict):
                 sdict = sdict[key]
         return sdict
 
+    def get_all_keys(self, basename='', depth=1):
+        result = []
+        if depth == 0:
+            return result
+        for key, val in self.items():
+            keyname = basename+'/'+key
+            if isinstance(val, dict):
+                result += ExtDict.get_all_keys(val, keyname, depth-1)
+            else:
+                result.append(keyname)
+        return result
+
+
 def astype(typestring):
+    if typestring in [int, float, str, bool]:
+        return typestring
     typestring = typestring.lower()
     if typestring == 'int':
         return int
@@ -53,15 +68,15 @@ def astype(typestring):
     else:
         raise NotImplementedError('{0} not implemented'.format(typestring))
 
-def update_items_with_node(root, item_xpath=None, sdict=dict()):
+def update_items_with_node(root, item_xpath=None, default_type='float', sdict=dict()):
     item_xpath = item_xpath or ['./i', './v']
     if isinstance(item_xpath, str):
         item_xpath = [item_xpath]
     assert isinstance(item_xpath, (list, tuple)), 'xpath {0} should be a list'.format(item_xpath)
     item_xpath = '|'.join(item_xpath)
-    for item_node in sep_node.xpath(item_xpath):
+    for item_node in root.xpath(item_xpath):
         item_name = item_node.get('name')
-        item_type = item_node.get('type', 'float')
+        item_type = item_node.get('type', default_type)
         if item_node.tag == 'i':
             value = astype(item_type)(item_node.text)
         elif item_node.tag == 'v':
@@ -83,7 +98,7 @@ def xml_parameters(xml_node):
     sdict = update_items_with_node(xml_node, item_xpath=ITEM_XPATH)
     parameters_section.update({'root': list(sdict)})
     parameters.update(sdict)
-    parameters['SECTION_DATA'] = parameters_section
+    # parameters['SECTION_DATA'] = parameters_section
     return parameters
 
 
@@ -135,7 +150,7 @@ def read(fileobj, format=None, get_dict=False, warning=False, DEBUG=False):
     file_string, file_format = get_filestring_and_format(fileobj, format)
     assert file_format is not None
     formats = FORMAT_STRING[file_format]
-    arrays = {}
+    arrays = ExtDict()
     process_primitive_data(arrays, file_string, formats, warning, DEBUG)
     process_synthesized_data(arrays, formats, DEBUG)
     if not HAS_ATOMSE or get_dict:
@@ -146,34 +161,34 @@ def read(fileobj, format=None, get_dict=False, warning=False, DEBUG=False):
 class FileFinder(object):
     """docstring for FileFinder"""
     SUPPOTED_FILETYPE = ['plain_text', 'lxml']
-    def __init__(self, fileobj, filetype='plain_text'):
+    def __init__(self, fileobj, file_format='plain_text'):
         super(FileFinder, self).__init__()
         self.fileobj = fileobj
-        self.filetype = filetype
-        file_string, filetype = get_filestring_and_format(fileobj, filetype)
-        if not filetype in self.SUPPOTED_FILETYPE:
+        self.file_format = file_format
+        file_string, file_format = get_filestring_and_format(fileobj, file_format)
+        if not file_format in self.SUPPOTED_FILETYPE:
             raise NotImplementedError('only {0} are supported'.format(self.SUPPOTED_FILETYPE))
         # assert isinstance(filename, str) and os.path.exists(filename), '{0} not exists'.format(filename)
-        if filetype == 'plain_text':
+        if file_format == 'plain_text':
             self.fileobj = file_string
-        elif filetype == 'lxml':
+        elif file_format == 'lxml':
             self.fileobj = etree.HTML(file_string.encode())
 
     def find_pattern(self, pattern):
         assert isinstance(pattern, str)
-        if self.filetype == 'plain_text':
-            return re.findall(pattern, fileobj)
-        elif self.filetype == 'lxml':
+        if self.file_format == 'plain_text':
+            return re.findall(pattern, self.fileobj)
+        elif self.file_format == 'lxml':
             return self.fileobj.xpath(pattern)
 
 def process_primitive_data(arrays, file_string, formats, warning=False, DEBUG=False):
     warning = warning or DEBUG
     primitive_data, ignorance = formats['primitive_data'], formats.get('ignorance', None)
     if ignorance:
-        file_string = '\n'.join([_.strip() for _ in file_string.split('\n') \
-            if not (len(_) > 0 and _[0] in ignorance)])
-    filetype = formats.get('filetype', 'plain_text')
-    finder = FileFinder(file_string, filetype=filetype)
+        file_string = '\n'.join([line.strip() for line in file_string.split('\n') \
+            if not (line and line[0] in ignorance)])
+    file_format = formats.get('file_format', 'plain_text')
+    finder = FileFinder(file_string, file_format=file_format)
     for pattern, pattern_property in primitive_data.items():
         if DEBUG: print(pattern, pattern_property)
         key = pattern_property['key']

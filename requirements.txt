@@ -3,3 +3,4 @@ pandas
 sh>=1.10.0
 argcomplete
 ase
+lxml

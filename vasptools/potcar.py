@@ -5,7 +5,7 @@ This module resolve VASP POTCAR related.
 import os
 import glob
 from . import utils
-
+from . import vasprun
 MOD_NAME = 'potcar'
 POTCAR_STRING   = 'POTCAR'
 DEFAULT_PP_TYPE = 'potpaw_PBE'
