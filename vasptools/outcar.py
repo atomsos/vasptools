@@ -13,16 +13,20 @@ IMPORTANT PARTS (used by cli)
 import os
 import glob
 from . import format_parser
+from . import vasprun
+
 MOD_NAME = 'outcar'
 OUTCAR_STRING = 'OUTCAR'
 DEFAULT_PP_TYPE = 'potpaw_PBE'
 
 def parse_outcar(filename=OUTCAR_STRING, dirname=None):
     dirname = dirname or '.'
-    assert isinstance(filename, str), 'filename should be a string, default OUTCAT'
+    assert isinstance(filename, str), 'filename should be a string, default OUTCAR'
     filepath = os.path.join(dirname, filename)
     assert os.path.isfile(filepath), '{0} does not exists'.format(filepath)
     return format_parser.read(filepath, format='vasp-out', get_dict=True)
+
+
 
 def test(test_dir=None):
     """
@@ -40,7 +44,7 @@ def cli_add_parser(subparsers):
     subp = subparsers.add_parser(MOD_NAME, help=OUTCAR_STRING)
     subp.add_argument('-d', '--dirname', metavar='PATH', help='dirname')
     subp.add_argument('-t', '--calc_type', help='type of calcualtion result')
-    subp.add_argument('outcar', metavar='PATH', help='OUTCAR path')
+    subp.add_argument('filename', metavar='PATH', help='OUTCAR path')
 
 def cli_args_exec(args):
     """
@@ -51,25 +55,14 @@ def cli_args_exec(args):
     if args.test:
         test(args.test_dir)
     else:
-        rs_dict = parse_outcar(args.outcar, args.basedir or args.dirname)
-        rs = rs_dict
+        if not args.basic_parser and vasprun.find_vasprun(args.filename):
+            sdict = vasprun.connection_with_other_file(args.filename)
+        else:
+            sdict = parse_outcar(args.filename, args.basedir or args.dirname)
         try:
             if args.calc_type:
-                calc_type = args.calc_type.split('/')
-            while calc_type:
-                if calc_type[0]:
-                    rs = rs[calc_type[0]]
-                calc_type.pop(0)
-            print(rs)
+                print(sdict[args.calc_type])
+            else:
+                print(sdict)
         except Exception:
-            print('only {0} are calculated'.format(get_all_keys(rs_dict)))
-
-def get_all_keys(sdict, basename=''):
-    result = []
-    for key, val in sdict.items():
-        keyname = basename+'/'+key
-        if isinstance(val, dict):
-            result += get_all_keys(val, keyname)
-        else:
-            result.append(keyname)
-    return result
+            print('only {0} are calculated'.format(sdict.get_all_keys()))

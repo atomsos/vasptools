@@ -8,33 +8,40 @@ import os
 import re
 from io import StringIO
 from configparser import ConfigParser
+from . import vasprun
+from .ext_types import ExtDict
+
 
 MOD_NAME = INCAR_STRING = 'incar'
 INCAR_SECTION_STRING = '['+INCAR_STRING+']'
 
 
 
-def parse_incar(incar=None):
+def parse_incar(incar=None, force_basic_parser=False):
     """
     parse incar file to a dict using configparser
     """
     incar = incar or INCAR_STRING
-    assert os.path.exists(incar), 'INCAR file should be given'
+    assert isinstance(incar, str) and os.path.exists(incar),\
+        'INCAR file should be given'
+    if not force_basic_parser and vasprun.find_vasprun(incar):
+        sdict = vasprun.connection_with_other_file(incar)
+        return sdict['calc_arrays/parameters']
     buff = INCAR_SECTION_STRING+'\n'
     with open(incar) as _fd:
         buff += _fd.read().lower()
     buff = re.sub(r'\n\s+', '\n', buff)
     conf = ConfigParser(inline_comment_prefixes=('#', ';'))
     conf.read_string(buff)
-    return dict(conf.items(INCAR_STRING))
+    return ExtDict(conf.items(INCAR_STRING))
 
 
 def preview_parse_incar(incar=None):
     """
     preview the dict parsed
     """
-    import json
-    print(json.dumps(parse_incar(incar), indent=4))
+    import json_tricks
+    print(json_tricks.dumps(parse_incar(incar), indent=4))
 
 
 
@@ -78,7 +85,7 @@ def test(test_dir=None):
     test_dir = test_dir or os.path.join(os.path.dirname(os.path.abspath(__file__)), 'test')
     assert isinstance(test_dir, str) and os.path.isdir(test_dir), \
         'test_dir: {0}\nYou need to git clone the repo and run the test'.format(test_dir)
-    incar = os.path.join(test_dir, 'INCAR_sample')
+    incar = os.path.join(test_dir, 'INCAR')
     incar_dict = parse_incar(incar)
     preview_parse_incar(incar)
     print(incar_dict)
@@ -92,7 +99,7 @@ def cli_add_parser(subparsers):
     potcar add_parser
     """
     subp = subparsers.add_parser(MOD_NAME, help='INCAR')
-    subp.add_argument('incar', metavar='PATH', help='INCAR template')
+    subp.add_argument('filename', metavar='PATH', help='INCAR template')
 
 
 def cli_args_exec(args):
@@ -104,4 +111,8 @@ def cli_args_exec(args):
     if args.test:
         test(args.test_dir)
     else:
-        parse_incar(args.incar)
+        sdict = parse_incar(args.filename, args.basic_parser)
+        for key, val in sdict.items():
+            if hasattr(val, tolist):
+                val = val.tolist()
+            print(key, ':', val)

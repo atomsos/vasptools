@@ -1,0 +1,14 @@
+#!/bin/sh
+#PBS -N VASP
+#PBS -q short 
+#PBS -l nodes=1:ppn=24
+#PBS -l walltime=24:00:00
+#source /opt/intel/composer_xe_2013.1.117/bin/compilervars.sh intel64
+source /opt/intel/impi/5.0.2.044/intel64/bin/mpivars.sh
+export VASPHOME=/home/scicons/VASP/VASP_5.3
+export LD_LIBRARY_PATH=${VASPHOME}/lib:$LD_LIBRARY_PATH
+export PATH=${VASPHOME}/:$PATH
+
+cd $PBS_O_WORKDIR
+ulimit -s unlimited
+mpirun -n 24 /home/scicons/VASP/VASP_5.3/vasp_5.3

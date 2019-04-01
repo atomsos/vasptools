@@ -13,7 +13,7 @@ import vasptools
 def test():
     error_mod = []
     exitcode = 0
-    for mod in vasptools.__all_modules__:
+    for mod in vasptools.__test_modules__:
         if hasattr(mod, 'test'):
             print(mod.__name__)
             try:
