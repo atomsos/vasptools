@@ -18,39 +18,11 @@ except ModuleNotFoundError:
     HAS_ATOMSE = False
 
 from .units import unit_to_Ang
+from .ext_types import ExtList, ExtDict
+
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-class ExtList(list):
-    def __mul__(self, a):
-        assert isinstance(a, (list, tuple, np.ndarray)) and len(self) == len(a),\
-            'multiplier should be a list of numbers, instead of {0} of {1}'.format(a, type(a))
-        return self.__class__([x for i, x in enumerate(self) for time in range(a[i])])
-
-class ExtDict(dict):
-    """docstring for ExtDict"""
-    def __getitem__(self, name):
-        if name in self.keys():
-            return dict.__getitem__(self, name)
-        name = name.split('/')
-        sdict = self
-        while name:
-            key = name.pop(0)
-            if key:
-                sdict = sdict[key]
-        return sdict
-
-    def get_all_keys(self, basename='', depth=1):
-        result = []
-        if depth == 0:
-            return result
-        for key, val in self.items():
-            keyname = basename+'/'+key
-            if isinstance(val, dict):
-                result += ExtDict.get_all_keys(val, keyname, depth-1)
-            else:
-                result.append(keyname)
-        return result
 
 
 def astype(typestring):

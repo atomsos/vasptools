@@ -2,7 +2,8 @@
 format_string contain vasp-out
 """
 from collections import OrderedDict
-from .format_parser import ExtList, datablock_to_numpy, xml_parameters
+from .format_parser import datablock_to_numpy, xml_parameters
+from .ext_types import ExtList, ExtDict
 
 
 FORMAT_STRING = {

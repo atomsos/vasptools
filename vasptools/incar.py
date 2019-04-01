@@ -9,6 +9,7 @@ import re
 from io import StringIO
 from configparser import ConfigParser
 from . import vasprun
+from .ext_types import ExtDict
 
 
 MOD_NAME = INCAR_STRING = 'incar'
@@ -16,27 +17,31 @@ INCAR_SECTION_STRING = '['+INCAR_STRING+']'
 
 
 
-def parse_incar(incar=None):
+def parse_incar(incar=None, force_basic_parser=False):
     """
     parse incar file to a dict using configparser
     """
     incar = incar or INCAR_STRING
-    assert os.path.exists(incar), 'INCAR file should be given'
+    assert isinstance(incar, str) and os.path.exists(incar),\
+        'INCAR file should be given'
+    if not force_basic_parser and vasprun.find_vasprun(incar):
+        sdict = vasprun.connection_with_other_file(incar)
+        return sdict['calc_arrays/parameters']
     buff = INCAR_SECTION_STRING+'\n'
     with open(incar) as _fd:
         buff += _fd.read().lower()
     buff = re.sub(r'\n\s+', '\n', buff)
     conf = ConfigParser(inline_comment_prefixes=('#', ';'))
     conf.read_string(buff)
-    return dict(conf.items(INCAR_STRING))
+    return ExtDict(conf.items(INCAR_STRING))
 
 
 def preview_parse_incar(incar=None):
     """
     preview the dict parsed
     """
-    import json
-    print(json.dumps(parse_incar(incar), indent=4))
+    import json_tricks
+    print(json_tricks.dumps(parse_incar(incar), indent=4))
 
 
 
@@ -106,16 +111,8 @@ def cli_args_exec(args):
     if args.test:
         test(args.test_dir)
     else:
-        import numpy as np
-        import json_tricks
-        if args.basic_parser:
-            sdict = parse_incar(args.filename)
-        else:
-            if not vasprun.find_vasprun(args.filename):
-                sdict = parse_incar(args.filename)
-            else:
-                sdict = vasprun.connection_with_other_file(args.filename)
+        sdict = parse_incar(args.filename, args.basic_parser)
         for key, val in sdict.items():
-            if isinstance(val, np.ndarray):
+            if hasattr(val, tolist):
                 val = val.tolist()
             print(key, ':', val)
