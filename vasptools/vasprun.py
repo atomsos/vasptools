@@ -28,22 +28,24 @@ def vasprun_parser(vasprun_filename):
 
 def connection_with_other_file(filename):
     sdict = vasprun_parser(find_vasprun(filename))
-    filename = os.path.basename(filename)
-    # import pdb; pdb.set_trace()
-    if filename in ['INCAR']:
-        return sdict['calc_arrays/parameters']
-    elif filename in ['OUTCAR']:
-        return sdict
-    elif filename in ['DOSCAR']:
-        return sdict['calc_arrays/dos']
-    elif filename in ['POSCAR', 'CONTCAR']:
-        return sdict['positions']
-    elif filename in ['EIGENVAL']:
-        return sdict['eigenvalues']
-    elif filename in ['POTCAR']:
-        return sdict['calc_arrays/pseudopotential']
-    else:
-        raise NotImplementedError(filename, 'not supported')
+    return sdict
+
+    # filename = os.path.basename(filename)
+    # # import pdb; pdb.set_trace()
+    # if filename in ['INCAR']:
+    #     return sdict['calc_arrays/parameters']
+    # elif filename in ['OUTCAR']:
+    #     return sdict
+    # elif filename in ['DOSCAR']:
+    #     return sdict['calc_arrays/dos']
+    # elif filename in ['POSCAR', 'CONTCAR']:
+    #     return sdict['positions']
+    # elif filename in ['EIGENVAL']:
+    #     return sdict['eigenvalues']
+    # elif filename in ['POTCAR']:
+    #     return sdict['calc_arrays/pseudopotential']
+    # else:
+    #     raise NotImplementedError(filename, 'not supported')
 
 def test(test_dir=None):
     """

@@ -21,7 +21,7 @@ DEFAULT_PP_TYPE = 'potpaw_PBE'
 
 def parse_outcar(filename=OUTCAR_STRING, dirname=None):
     dirname = dirname or '.'
-    assert isinstance(filename, str), 'filename should be a string, default OUTCAT'
+    assert isinstance(filename, str), 'filename should be a string, default OUTCAR'
     filepath = os.path.join(dirname, filename)
     assert os.path.isfile(filepath), '{0} does not exists'.format(filepath)
     return format_parser.read(filepath, format='vasp-out', get_dict=True)
