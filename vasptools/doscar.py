@@ -11,6 +11,8 @@ from . import atom_selector
 
 MOD_NAME = DOSCAR_STRING = 'doscar'
 DOSCAR_SECTION_STRING = '['+DOSCAR_STRING+']'
+SUPPORTED_ANGULAR_MOMENTUM = ['s', 'px', 'py', 'pz',\
+    'dxy', 'dxz', 'dyz', 'dz2', 'x2-y2']
 
 
 
@@ -34,8 +36,6 @@ def preview_parse_doscar(doscar=None):
 
 def generate_picture(args):
     import matplotlib.pyplot as plt
-    SUPPORTED_ANGULAR_MOMENTUM = ['s', 'px', 'py', 'pz',\
-        'dxy', 'dxz', 'dyz', 'dz2', 'x2-y2']
     sdict = parse_doscar(args.filename, args.basic_parser)
     symbols = sdict['symbols']
     positions = sdict['positions']
@@ -154,13 +154,14 @@ def cli_add_parser(subparsers):
     potcar add_parser
     """
     subp = subparsers.add_parser(MOD_NAME, help='DOSCAR')
-    subp.add_argument('filename', metavar='PATH', help='DOSCAR template')
-    subp.add_argument('--outputdir', nargs=1, metavar='PATH', default='.', help='DOSCAR template')
+    subp.add_argument('filename', metavar='PATH', help='DOSCAR filename')
+    subp.add_argument('--outputdir', nargs=1, metavar='PATH', default='.', help='output directory')
     subp.add_argument('--title', metavar='string', help='title of picture')
     subp.add_argument('--atoms', nargs='*', help='generate picture')
     subp.add_argument('--xlim', nargs=2, metavar='float', help='xlimit of picture')
     subp.add_argument('--ylim', nargs=2, metavar='float', help='ylimit of picture')
-    subp.add_argument('-a', '--angular_momentum', nargs='*', help='selected angular momentum')
+    subp.add_argument('-a', '--angular_momentum', nargs='*', 
+                      help='selected angular momentum, supports:{0}'.format(SUPPORTED_ANGULAR_MOMENTUM ))
     subp.add_argument('--spin_type', nargs='*', metavar='float', help='ylimit of picture')
     subp.add_argument('--xregion', nargs=2, metavar='float', help='x region of system')
     subp.add_argument('--yregion', nargs=2, metavar='float', help='y region of system')
