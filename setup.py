@@ -43,10 +43,7 @@ if __name__ == '__main__':
             'Programming Language :: Python :: 3.6',
             'Programming Language :: Python :: 3.7',
         ],
-        install_requires=[
-            'sh>=1.10.0',
-            'argcomplete',
-        ],
+        install_requires=open('requirements.txt').read().split(),
         entry_points={
             "console_scripts": [
                 "vasptools=vasptools.cli:run_vasptools_cli",
