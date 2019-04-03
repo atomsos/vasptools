@@ -10,7 +10,7 @@ FORMAT_STRING = {
     'vasp-out': {
         'file_format' : 'plain_text',
         'calculator' : 'VASP',
-        'primitive_data': {
+        'primitive_data': OrderedDict({
             r'free  energy   TOTEN\s*=\s*(.*?)\s+eV\s*\n' : {
                 'important' : True,
                 'selection' : -1,
@@ -40,8 +40,9 @@ FORMAT_STRING = {
             r'VRHFIN\s*=\s*(.*?):' : {
                 'important' : True,
                 'selection' : 'all',
+                'process' : lambda data, arrays: data.strip(),
                 'type' : ext_types.ExtList,
-                'key' : 'elements_per_type',
+                'key' : 'element_types',
                 },
             r'POSITION\s*TOTAL-FORCE[\s\S]*?-{2,}\n([\s\S]*?)\n\s+-{2,}' : {
                 'important' : True,
@@ -87,14 +88,19 @@ FORMAT_STRING = {
                     },
                     ],
                 },
-            },
-        'synthesized_data' : {
-            'symbols' : {
-                'equation' : lambda arrays: arrays['elements_per_type'] * arrays['ions_per_type'],
+            }),
+        'synthesized_data' : OrderedDict({
+            # 'symbols' : {
+            #     'equation' : lambda arrays: arrays['element_types'] * arrays['ions_per_type'],
+            #     },
+            'pseudo' : {
+                'equation' : lambda arrays: arrays['vasp_pot'] * arrays['ions_per_type'],
+                'delete' : ['vasp_pot'],
                 },
-        },
+        }),
     },
     'DOSCAR' : {
+        'calculator' : 'VASP',
         'file_format' : 'plain_text',
         'primitive_data' : {
             r'.*\n.*\n.*\n.*\n.*\n.*\n([\s\S]*)' : {
@@ -107,8 +113,9 @@ FORMAT_STRING = {
         'synthesized_data' : {},
     },
     'vasp-xml' : {
+        'calculator' : 'VASP',
         'file_format' : 'lxml',
-        'primitive_data' : {
+        'primitive_data' : OrderedDict({
             '(//varray[@name="basis"])[last()]//v//text()' : {
                 'important' : True,
                 'join' : '\n',
@@ -125,6 +132,7 @@ FORMAT_STRING = {
             '//atominfo/array[@name="atoms"]/set/rc/c[1]/text()' : {
                 'important' : True,
                 'selection' : 'all',
+                'process' : lambda data, arrays: data.strip(),
                 'key' : 'symbols',
                 },
             '//atominfo/array[@name="atomtypes"]/set/rc/c[5]/text()' : {
@@ -138,8 +146,63 @@ FORMAT_STRING = {
                 'important' : False,
                 'selection' : 'all',
                 'process' : lambda data, arrays: data.strip(),
-                'key' : 'dos_total_header',
+                'key' : 'calc_arrays/dos_total_header',
                 },
+            '(//energy)[last()]/i[@name="e_fr_energy"]/text()' : {
+                'important' : True,
+                'process' : lambda data, arrays: data.strip(),
+                'type' : float,
+                'key' : 'calc_arrays/e_fr_energy',
+            },
+            '(//energy)[last()]/i[@name="e_wo_entrp"]/text()' : {
+                'important' : True,
+                'process' : lambda data, arrays: data.strip(),
+                'type' : float,
+                'key' : 'calc_arrays/potential_energy',
+            },
+            '(//energy)[last()]/i[@name="e_0_energy"]/text()' : {
+                'important' : True,
+                'process' : lambda data, arrays: data.strip(),
+                'type' : float,
+                'key' : 'calc_arrays/e_0_energy',
+            },
+            '//time[@name="totalsc"]/text()' : {
+                'important' : True,
+                'join' : '\n',
+                'process' : lambda data, arrays: ext_methods.datablock_to_numpy(data),
+                'type' : float,
+                'key' : 'calc_arrays/total_time'
+            },
+            '(//varray[@name="forces"])[last()]/v/text()' : {
+                'important' : False,
+                'join' : '\n',
+                'process' : lambda data, arrays: ext_methods.datablock_to_numpy(data),
+                'type' : float,
+                'key' : 'calc_arrays/forces',
+            },
+            '//varray[@name="forces"]/v/text()' : {
+                'important' : True, 
+                'join' : '\n',
+                'process' : lambda data, arrays: ext_methods.datablock_to_numpy(data).reshape((-1, \
+                            len(arrays['calc_arrays/forces']), 3)),
+                'type' : float,
+                'key' : 'calc_arrays/all_forces',
+            },
+            '(//varray[@name="stress"])[last()]/v/text()' : {
+                'important' : False,
+                'join' : '\n',
+                'process' : lambda data, arrays: ext_methods.datablock_to_numpy(data),
+                'type' : float,
+                'key' : 'calc_arrays/stress',
+            },
+            '//varray[@name="stress"]/v/text()' : {
+                'important' : False,
+                'join' : '\n',
+                'process' : lambda data, arrays: ext_methods.datablock_to_numpy(data).reshape((-1, \
+                            len(arrays['calc_arrays/stress']), 3)),
+                'type' : float,
+                'key' : 'calc_arrays/all_stress',
+            },
             '//dos/total/array/set/set[@comment="spin 1"]/r/text()' : {
                 'important' : False,
                 'join' : '\n',
@@ -158,8 +221,8 @@ FORMAT_STRING = {
                 'important' : False,
                 'selection' : 'all',
                 'process' : lambda data, arrays: data.strip(),
-                'key' : 'dos_partial_header',
-                },
+                'key' : 'calc_arrays/dos_partial_header',
+            },
             '//dos/partial/array/set/set/set[@comment="spin 1"]/r/text()' : {
                 'important' : False,
                 'join' : '\n',
@@ -173,6 +236,35 @@ FORMAT_STRING = {
                 'process' : lambda data, arrays: ext_methods.datablock_to_numpy(data),
                 'type' : float,
                 'key' : 'dos_partial_spin2',
+            },
+            '(//eigenvalues)[last()]/array/field/text()' : {
+                'important' : True,
+                'selection' : 'all',
+                'process' : lambda data, arrays: data.strip(),
+                'key' : 'calc_arrays/eigenvalues_header',
+            },
+            '(//eigenvalues)[last()]/array/set/set[@comment="spin 1"]/set[@comment="kpoint 1"]/r/text()' : {
+                'important' : True,
+                'join' : '\n',
+                'process' : lambda data, arrays: ext_methods.datablock_to_numpy(data),
+                'type' : float,
+                'key' : 'calc_arrays/spin1_kpoint1_eigen',
+            },
+            '(//eigenvalues)[last()]/array/set/set[@comment="spin 1"]/set/r/text()' : {
+                'important' : True,
+                'join' : '\n',
+                'process' : lambda data, arrays: ext_methods.datablock_to_numpy(data).reshape(\
+                        tuple([-1] + list(arrays['calc_arrays/spin1_kpoint1_eigen'].shape))),
+                'type' : float,
+                'key' : 'calc_arrays/spin1_eigen',
+            },
+            '(//eigenvalues)[last()]/array/set/set[@comment="spin 2"]/set/r/text()' : {
+                'important' : False,
+                'join' : '\n',
+                'process' : lambda data, arrays: ext_methods.datablock_to_numpy(data).reshape(\
+                        tuple([-1] + list(arrays['calc_arrays/spin1_kpoint1_eigen'].shape))),
+                'type' : float,
+                'key' : 'calc_arrays/spin2_eigen',
             },
             '//parameters' : {
                 'important' : True,
@@ -196,32 +288,32 @@ FORMAT_STRING = {
                 'type' : float,
                 'key' : 'calc_arrays/kpoints/weights',
             },
-        },
+        }),
         'synthesized_data' : OrderedDict({
             'calc_arrays/dos/partial/spin1' : {
-                'prerequisite' : ['dos_partial_header', 'dos_partial_spin1'],
-                'equation' : lambda arrays: dict(zip(arrays['dos_partial_header'], \
+                'prerequisite' : ['calc_arrays/dos_partial_header', 'dos_partial_spin1'],
+                'equation' : lambda arrays: dict(zip(arrays['calc_arrays/dos_partial_header'], \
                     [arrays['dos_partial_spin1'][:,i].reshape((-1, len(arrays['dos_total_spin1']))) \
-                        for i in range(len(arrays['dos_partial_header']))])),
+                        for i in range(len(arrays['calc_arrays/dos_partial_header']))])),
                 'delete' : ['dos_partial_spin1'],
             },
             'calc_arrays/dos/partial/spin2' : {
-                'prerequisite' : ['dos_partial_header', 'dos_partial_spin2'],
-                'equation' : lambda arrays: dict(zip(arrays['dos_partial_header'], \
+                'prerequisite' : ['calc_arrays/dos_partial_header', 'dos_partial_spin2'],
+                'equation' : lambda arrays: dict(zip(arrays['calc_arrays/dos_partial_header'], \
                     [arrays['dos_partial_spin2'][:,i].reshape((-1, len(arrays['dos_total_spin1']))) \
-                        for i in range(len(arrays['dos_partial_header']))])),
+                        for i in range(len(arrays['calc_arrays/dos_partial_header']))])),
                 'delete' : ['dos_partial_spin2'],
             },
             'calc_arrays/dos/total/spin1' : {
-                'prerequisite' : ['dos_total_header', 'dos_total_spin1'],
-                'equation' : lambda arrays: dict(zip(arrays['dos_total_header'], \
-                    [arrays['dos_total_spin1'][:,i] for i in range(len(arrays['dos_total_header']))])),
+                'prerequisite' : ['calc_arrays/dos_total_header', 'dos_total_spin1'],
+                'equation' : lambda arrays: dict(zip(arrays['calc_arrays/dos_total_header'], \
+                    [arrays['dos_total_spin1'][:,i] for i in range(len(arrays['calc_arrays/dos_total_header']))])),
                 'delete' : ['dos_total_spin1'],
             },
             'calc_arrays/dos/total/spin2' : {
-                'prerequisite' : ['dos_total_header', 'dos_total_spin2'],
-                'equation' : lambda arrays: dict(zip(arrays['dos_total_header'], \
-                    [arrays['dos_total_spin2'][:,i] for i in range(len(arrays['dos_total_header']))])),
+                'prerequisite' : ['calc_arrays/dos_total_header', 'dos_total_spin2'],
+                'equation' : lambda arrays: dict(zip(arrays['calc_arrays/dos_total_header'], \
+                    [arrays['dos_total_spin2'][:,i] for i in range(len(arrays['calc_arrays/dos_total_header']))])),
                 'delete' : ['dos_total_spin2'],
             },
             'positions' : {
