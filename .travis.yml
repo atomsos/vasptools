@@ -25,4 +25,6 @@ script:
   - make travisinstall
   - make test
 
+notifications:
+  email: false
 
