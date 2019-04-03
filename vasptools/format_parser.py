@@ -117,14 +117,14 @@ def get_filestring_and_format(fileobj, file_format=None):
     return fileobj.lstrip(), file_format
 
 
-def read(fileobj, format=None, get_dict=False, warning=False, DEBUG=False):
+def read(fileobj, format=None, get_dict=False, warning=False, debug=False):
     from .format_string import FORMAT_STRING
     file_string, file_format = get_filestring_and_format(fileobj, format)
     assert file_format is not None
     formats = FORMAT_STRING[file_format]
     arrays = ExtDict()
-    process_primitive_data(arrays, file_string, formats, warning, DEBUG)
-    process_synthesized_data(arrays, formats, DEBUG)
+    process_primitive_data(arrays, file_string, formats, warning, debug)
+    process_synthesized_data(arrays, formats, debug)
     if not HAS_ATOMSE or get_dict:
         return arrays
     return assemble_atoms(arrays, formats.get('calculator', None))
@@ -153,8 +153,8 @@ class FileFinder(object):
         elif self.file_format == 'lxml':
             return self.fileobj.xpath(pattern)
 
-def process_primitive_data(arrays, file_string, formats, warning=False, DEBUG=False):
-    warning = warning or DEBUG
+def process_primitive_data(arrays, file_string, formats, warning=False, debug=False):
+    warning = warning or debug
     primitive_data, ignorance = formats['primitive_data'], formats.get('ignorance', None)
     if ignorance:
         file_string = '\n'.join([line.strip() for line in file_string.split('\n') \
@@ -162,14 +162,15 @@ def process_primitive_data(arrays, file_string, formats, warning=False, DEBUG=Fa
     file_format = formats.get('file_format', 'plain_text')
     finder = FileFinder(file_string, file_format=file_format)
     for pattern, pattern_property in primitive_data.items():
-        if DEBUG: print(pattern, pattern_property)
+        if debug: print(pattern, pattern_property)
         key = pattern_property['key']
         important = pattern_property.get('important', False)
         selection = pattern_property.get('selection', -1) # default select the last one
+        if pattern_property.get('debug', False):
+            import pdb; pdb.set_trace()
         selectAll = selection == 'all'
         assert isinstance(selection, int) or selection == 'all', 'selection must be int or all'
         match = finder.find_pattern(pattern)
-        if DEBUG: print(match)
         if not match:
             if important:
                 raise ValueError(key, 'not match, however important')
@@ -180,15 +181,12 @@ def process_primitive_data(arrays, file_string, formats, warning=False, DEBUG=Fa
             match = [pattern_property['join'].join(match)]
             # import pdb; pdb.set_trace()
         process = pattern_property.get('process', None)
-        if DEBUG:
-            print('match', match)
         if not selectAll:
             match = [match[selection]]
         if process:
             match = [process(x, arrays) for x in match]
         if isinstance(key, str):
             value = match[0] if not selectAll else match
-            if DEBUG: print(key, value)
             if pattern_property.get('type', None):
                 if isinstance(value, np.ndarray):
                     value = value.astype(pattern_property['type'])
@@ -196,9 +194,7 @@ def process_primitive_data(arrays, file_string, formats, warning=False, DEBUG=Fa
                     value = pattern_property['type'](value)
             arrays.update(construct_depth_dict(key, value, arrays))
         else: # array
-            if DEBUG: print(key)
             def np_select(data, dtype, index):
-                if DEBUG: print(data, type(data))
                 data = eval('data[{0}]'.format(index))
                 return data.astype(dtype)
             for key_group in key:
@@ -209,15 +205,16 @@ def process_primitive_data(arrays, file_string, formats, warning=False, DEBUG=Fa
                     value = [np_select(data, dtype, index) for data in match]
                 arrays.update(construct_depth_dict(key, value, arrays))
 
-def process_synthesized_data(arrays, formats, DEBUG=False):
+def process_synthesized_data(arrays, formats, debug=False):
     # Process synthesized data
     synthesized_data = formats['synthesized_data']
     for key, key_property in synthesized_data.items():
         cannot_synthesize = False
+        if key_property.get('debug', False):
+            import pdb; pdb.set_trace()
         if key_property.get('prerequisite', None):
             for item in key_property.get('prerequisite'):
-                if not item in arrays:
-                    if DEBUG: print('{0} not in arrays, {1} cannot be synthesized'.format(item, key))
+                if not arrays.has_key(item):
                     cannot_synthesize = True
         if cannot_synthesize:
             continue

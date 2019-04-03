@@ -11,7 +11,6 @@ IMPORTANT PARTS (used by cli)
 """
 
 import os
-import glob
 from . import format_parser
 from . import vasprun
 
@@ -33,9 +32,12 @@ def test(test_dir=None):
     test of outcar
     """
     test_dir = test_dir or os.path.join(\
-        os.path.dirname(os.path.abspath(__file__)), '..', 'test_dir')
+        os.path.dirname(os.path.abspath(__file__)), 'test')
     test_outcar = os.path.join(test_dir, 'OUTCAR')
-    print(parse_outcar(test_outcar))
+    # print(test_outcar, os.path.isfile(test_outcar))
+    result = parse_outcar(test_outcar)
+    print(result)
+    return result
 
 def cli_add_parser(subparsers):
     """

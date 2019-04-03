@@ -88,14 +88,22 @@ FORMAT_STRING = {
                     },
                     ],
                 },
+                r'POTCAR: *(.*?) *\n *VRHFIN' : {
+                    'important' : True,
+                    'selection' : 'all',
+                    # 'process' : lambda data, arrays: data.strip();
+                    'key' : 'vasp_pot',
+                    'type' : ext_types.ExtList,
+                },
             }),
         'synthesized_data' : OrderedDict({
-            # 'symbols' : {
-            #     'equation' : lambda arrays: arrays['element_types'] * arrays['ions_per_type'],
-            #     },
+            'symbols' : {
+                'equation' : lambda arrays: arrays['element_types'] * arrays['ions_per_type'],
+                'delete' : ['element_types'],
+                },
             'pseudo' : {
                 'equation' : lambda arrays: arrays['vasp_pot'] * arrays['ions_per_type'],
-                'delete' : ['vasp_pot'],
+                'delete' : ['vasp_pot', 'ions_per_type'],
                 },
         }),
     },
@@ -134,6 +142,13 @@ FORMAT_STRING = {
                 'selection' : 'all',
                 'process' : lambda data, arrays: data.strip(),
                 'key' : 'symbols',
+                },
+            '//atominfo/array[@name="atomtypes"]/set/rc/c[1]/text()' : {
+                'important' : True,
+                'selection' : 'all',
+                'process' : lambda data, arrays: int(data),
+                'type' : ext_types.ExtList,
+                'key' : 'ions_per_type',
                 },
             '//atominfo/array[@name="atomtypes"]/set/rc/c[5]/text()' : {
                 'important' : True,
@@ -291,6 +306,7 @@ FORMAT_STRING = {
         }),
         'synthesized_data' : OrderedDict({
             'calc_arrays/dos/partial/spin1' : {
+                # 'debug' : True,
                 'prerequisite' : ['calc_arrays/dos_partial_header', 'dos_partial_spin1'],
                 'equation' : lambda arrays: dict(zip(arrays['calc_arrays/dos_partial_header'], \
                     [arrays['dos_partial_spin1'][:,i].reshape((-1, len(arrays['dos_total_spin1']))) \
@@ -320,6 +336,10 @@ FORMAT_STRING = {
                 'prerequisite' : ['cell', 'cell_scaled_positions'],
                 'equation' : lambda arrays: arrays['cell_scaled_positions'].dot(arrays['cell']),
                 'delete' : ['cell_scaled_positions'],
+                },
+            'pseudo' : {
+                'equation' : lambda arrays: arrays['vasp_pot'] * arrays['ions_per_type'],
+                'delete' : ['vasp_pot', 'ions_per_type'],
                 },
         }),
     }

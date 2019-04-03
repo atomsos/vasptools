@@ -28,9 +28,19 @@ class ExtDict(dict):
         sdict = self
         while name:
             key = name.pop(0)
-            if key:
-                sdict = sdict[key]
+            if not key:
+                continue
+            if not key in sdict.keys():
+                raise KeyError('{0} not exist'.format(key))
+            sdict = sdict[key]
         return sdict
+
+    def has_key(self, name):
+        try:
+            self[name]
+            return True
+        except KeyError:
+            return False
 
     def get_all_keys(self, basename='', depth=10000):
         result = []
