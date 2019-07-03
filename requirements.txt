@@ -1,7 +1,6 @@
-numpy
-pandas
-sh>=1.10.0
-argcomplete
-ase
-lxml
-json_tricks
+sh>=1.12.14
+matplotlib>=2.2.2
+argcomplete>=1.9.4
+ase>=3.17.0
+json_tricks>=3.13.1
+chemio>=1.4.1
