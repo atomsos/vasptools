@@ -7,11 +7,7 @@ from io import StringIO
 import sh
 
 
-
-
-
-
-POSSIBLE_POTCAR_ENV = ['VASPPOT', 'VASP_PP_PATH', 'VASPPOT_HOME',]
+POSSIBLE_POTCAR_ENV = ['VASPPOT', 'VASP_PP_PATH', 'VASPPOT_HOME', ]
 VALID_PP_TYPES = ['potcar', 'potcarGGA', 'potpaw', 'potpaw_GGA', 'potpaw_PBE']
 CHEMICAL_SYMBOLS = ['X', 'H', 'He', 'Li', 'Be', 'B', 'C', 'N', 'O', 'F',
                     'Ne', 'Na', 'Mg', 'Al', 'Si', 'P', 'S', 'Cl', 'Ar',
@@ -33,7 +29,6 @@ global VASPPOT_PATH
 VASPPOT_PATH = None
 
 
-
 def reset_vasppot_path():
     global VASPPOT_PATH
     for env in POSSIBLE_POTCAR_ENV:
@@ -41,7 +36,5 @@ def reset_vasppot_path():
             VASPPOT_PATH = os.environ[env]
             break
 
+
 reset_vasppot_path()
-
-
-

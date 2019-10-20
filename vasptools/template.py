@@ -35,7 +35,8 @@ def get_potcar_content(pp_names=None, pp_type=DEFAULT_PP_TYPE):
 
     output = ''
     for name in pp_names:
-        path = os.path.join(utils.VASPPOT_PATH, pp_type, name, POTCAR_STRING+'*')
+        path = os.path.join(utils.VASPPOT_PATH, pp_type,
+                            name, POTCAR_STRING+'*')
         candidate = glob.glob(path)
         if not candidate:
             raise ValueError(pp_type+' may not have '+name)
@@ -94,13 +95,14 @@ def test(test_dir=None):
     """
     test of potcar
     """
-    test_dir = test_dir or os.path.join(\
+    test_dir = test_dir or os.path.join(
         os.path.dirname(os.path.abspath(__file__)), '..', 'test_dir')
     os.environ['VASPPOT'] = os.path.join(test_dir, 'vasppot_sample')
     utils.reset_vasppot_path()
     print(utils.VASPPOT_PATH)
     gen_potcar(['H', 'He', 'Li'], preview=True)
     gen_potcar(['H', 'He', 'Li'], dirname='/tmp')
+
 
 def cli_add_parser(subparsers):
     """
@@ -116,6 +118,7 @@ def cli_add_parser(subparsers):
     subp.add_argument('-l', '--list', action='store_true',
                       help='list available potcar')
     subp.add_argument('pp_names', nargs='*')
+
 
 def cli_args_exec(args):
     """

@@ -16,9 +16,11 @@ def _cli_check_data_dir(data_dir):
     data_dir = os.path.expanduser(data_dir)
     data_dir = os.path.expandvars(data_dir)
     if not os.path.isdir(data_dir):
-        raise RuntimeError("Data directory '{}' does not exist or is not a directory".format(data_dir))
+        raise RuntimeError(
+            "Data directory '{}' does not exist or is not a directory".format(data_dir))
     if not os.path.isfile(os.path.join(data_dir, 'METADATA.json')):
-        raise RuntimeError("Data directory '{}' does not contain a METADATA.json file".format(data_dir))
+        raise RuntimeError(
+            "Data directory '{}' does not contain a METADATA.json file".format(data_dir))
 
     return data_dir
 

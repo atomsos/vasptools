@@ -3,7 +3,6 @@ vasptools incar module
 """
 
 
-
 import os
 import re
 from io import StringIO
@@ -14,7 +13,6 @@ from .ext_types import ExtDict
 
 MOD_NAME = INCAR_STRING = 'incar'
 INCAR_SECTION_STRING = '['+INCAR_STRING+']'
-
 
 
 def parse_incar(incar=None, force_basic_parser=False):
@@ -44,7 +42,6 @@ def preview_parse_incar(incar=None):
     print(json_tricks.dumps(parse_incar(incar), indent=4))
 
 
-
 def output_incar(incar_dict=None):
     """
     output a incar string using incar_dict
@@ -52,13 +49,14 @@ def output_incar(incar_dict=None):
     assert isinstance(incar_dict, dict), 'incar_dict should be a dict'
     incar_dict = {
         INCAR_STRING: incar_dict
-        }
+    }
     conf = ConfigParser()
     conf.read_dict(incar_dict)
     buff = StringIO()
     conf.write(buff)
     buff = buff.getvalue()
-    assert buff.startswith(INCAR_SECTION_STRING), 'output_incar buff error: '+buff
+    assert buff.startswith(
+        INCAR_SECTION_STRING), 'output_incar buff error: '+buff
     return buff[len(INCAR_SECTION_STRING):]
 
 
@@ -82,16 +80,17 @@ def test(test_dir=None):
     """
     Test incar
     """
-    test_dir = test_dir or os.path.join(os.path.dirname(os.path.abspath(__file__)), 'test')
+    test_dir = test_dir or os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), 'test')
     assert isinstance(test_dir, str) and os.path.isdir(test_dir), \
-        'test_dir: {0}\nYou need to git clone the repo and run the test'.format(test_dir)
+        'test_dir: {0}\nYou need to git clone the repo and run the test'.format(
+            test_dir)
     incar = os.path.join(test_dir, 'INCAR')
     incar_dict = parse_incar(incar)
     preview_parse_incar(incar)
     print(incar_dict)
     preview_output_incar(incar_dict)
     gen_incar(incar_dict, '/tmp')
-
 
 
 def cli_add_parser(subparsers):

@@ -3,6 +3,7 @@
 import os
 from setuptools import setup, find_packages
 
+
 def get_version():
     import sys
     sys.path.append(os.path.dirname(os.path.abspath(__file__)))
@@ -11,7 +12,8 @@ def get_version():
 
 
 if __name__ == '__main__':
-    test_files = [os.path.join('vasptools', 'test', filename) for filename in os.listdir('vasptools/test')]
+    test_files = [os.path.join('vasptools', 'test', filename)
+                  for filename in os.listdir('vasptools/test')]
     print(test_files)
     setup(
         name='vasptools',
@@ -64,7 +66,7 @@ if __name__ == '__main__':
                 'graphviz'
             ],
         },
-        include_package_data = True,
-        package_data = {'vasptools_test': test_files},
+        include_package_data=True,
+        package_data={'vasptools_test': test_files},
         zip_safe=False,
     )

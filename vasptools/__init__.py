@@ -3,7 +3,6 @@ vasptools __init__
 """
 
 
-
 from . import api
 from . import potcar
 from . import poscar
@@ -25,12 +24,14 @@ __all_modules__ = [
     wavecar,
     chgcar,
     chg,
-    ]
+]
 
 from . import vasprun
 
 __test_modules__ = __all_modules__ + [vasprun]
 
 __version__ = '0.6.1'
+
+
 def version():
     return __version__

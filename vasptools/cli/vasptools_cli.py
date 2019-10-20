@@ -8,11 +8,12 @@ from .. import version, __all_modules__
 from .vasptools_handlers import vasptools_cli_handle_subcmd
 from .check import cli_check_normalize_args
 from .complete import (cli_case_insensitive_validator,
-                       cli_family_completer, 
-                       cli_role_completer, 
+                       cli_family_completer,
+                       cli_role_completer,
                        cli_bsname_completer,
-                       cli_fmt_completer, 
+                       cli_fmt_completer,
                        cli_reffmt_completer)
+
 
 def run_vasptools_cli():
     ################################################################################################
@@ -25,19 +26,24 @@ def run_vasptools_cli():
     # Main global options
     ########################################
     parser = argparse.ArgumentParser(description='VASPTOOLS')
-    parser.add_argument('-d', '--basedir', metavar='PATH', default='.', help='test_dir')
+    parser.add_argument('-d', '--basedir', metavar='PATH',
+                        default='.', help='test_dir')
     parser.add_argument('-p', '--preview', action='store_true', help='preview')
-    parser.add_argument('--basic_parser', action='store_true', help='use basic parser instead of vasprun parser')
-    parser.add_argument('-ppath', '--potpath', metavar='PATH', help='set vasppot_path, you could also set env VASPPOT')
+    parser.add_argument('--basic_parser', action='store_true',
+                        help='use basic parser instead of vasprun parser')
+    parser.add_argument('-ppath', '--potpath', metavar='PATH',
+                        help='set vasppot_path, you could also set env VASPPOT')
     parser.add_argument('-t', '--test', action='store_true', help='run test')
     parser.add_argument('-td', '--test_dir', metavar='PATH', help='test_dir')
-    parser.add_argument('-s', '--shell', action='store_true', help='shell mode, exec shell script')
+    parser.add_argument('-s', '--shell', action='store_true',
+                        help='shell mode, exec shell script')
     parser.add_argument('-D', '--DEBUG', action='store_true', help='debug')
-    parser.add_argument('-V', action='version', version='vasptools ' + version())
+    parser.add_argument('-V', action='version',
+                        version='vasptools ' + version())
     # parser.add_argument('-o', '--output', metavar='PATH', help='Output to given file rather than stdout')
 
     subparsers = parser.add_subparsers(metavar='subcommand', dest='subcmd')
-    subparsers.required = True # https://bugs.python.org/issue9253#msg186387
+    subparsers.required = True  # https://bugs.python.org/issue9253#msg186387
 
     module_map = {}
     for mod in __all_modules__:
@@ -45,7 +51,8 @@ def run_vasptools_cli():
             mod_name = mod.MOD_NAME
             mod.cli_add_parser(subparsers)
             module_map.update({mod_name: mod})
-    subparsers.add_parser('LISTSUBCOMMAND', help='list all sub commands, just for test')
+    subparsers.add_parser(
+        'LISTSUBCOMMAND', help='list all sub commands, just for test')
 
     """
     ########################################
@@ -182,5 +189,6 @@ def run_vasptools_cli():
 
     # Actually generate the output
     #  output = vasptools_cli_handle_subcmd(args)
-    assert args.subcmd in module_map, '{0} not in module_map: {1}'.format(args.subcmd, list(module_map))
+    assert args.subcmd in module_map, '{0} not in module_map: {1}'.format(
+        args.subcmd, list(module_map))
     return module_map[args.subcmd].cli_args_exec(args)

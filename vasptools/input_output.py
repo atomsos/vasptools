@@ -9,11 +9,7 @@ VASP Input/Output
 """
 
 
-
-
 import chemio
-
-
 
 
 def read(filename, filetype=None):
@@ -26,4 +22,3 @@ def write(filename, arrays, filetype=None):
 
 def preview(arrays, filetype):
     chemio.preview(arrays, filetype)
-

@@ -16,5 +16,3 @@ def unit_to_Ang(unit=None):
         return ase_units.u['nm']/1000
     else:
         raise NotImplementedError(unit, ' not valid')
-
-
